@@ -6,7 +6,7 @@ const theme = {
       textSecondary: '#586069',
       primary: '#0366d6',
       background: '#24292e',
-      bar: '#FFFFFF',    },
+    },
     fontSizes: {
       body: 14,
       subheading: 16,

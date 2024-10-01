@@ -49,7 +49,7 @@ const SignInForm = ({ onSubmit }) => {
       alignItems: 'center',
     },
     buttonText: {
-      color: theme.colors.bar,
+      color: 'white',
       fontWeight: 'bold',
     },
     errorText: {
