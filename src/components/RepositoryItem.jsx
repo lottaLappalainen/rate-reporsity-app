@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
-import Text from './Text';  
+import { View, StyleSheet, Image, Pressable } from 'react-native';
+import Text from './Text';
+import * as Linking from 'expo-linking';
+import theme from './theme'; 
 
 const formatNumber = (number) => {
   if (number >= 1000) {
@@ -31,10 +33,26 @@ const styles = StyleSheet.create({
   },
   flexItem: {
     display: 'flex',
-  }
+  },
+  button: {
+    backgroundColor: theme.colors.primary,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
 
-const RepositoryItem = ({ item }) => {
+
+const RepositoryItem = ({ item, singleView }) => {
+  const handlePress = () => {
+    Linking.openURL(item.url); 
+  };
+
   return (
     <View testID="repositoryItem" style={styles.container}>
       <View style={styles.flexContainer}>
@@ -67,6 +85,11 @@ const RepositoryItem = ({ item }) => {
       <Text fontWeight="bold">{item.ratingAverage}</Text>
       </View>
       </View>
+      {singleView && (
+          <Pressable style={styles.button} onPress={handlePress}>
+            <Text style={styles.buttonText}>Open in GitHub</Text>
+          </Pressable>
+        )}
     </View>
   );
 };
