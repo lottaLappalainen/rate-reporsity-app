@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 
 const RepositoryItem = ({ item }) => {
   return (
-    <View style={styles.container}>
+    <View testID="repositoryItem" style={styles.container}>
       <View style={styles.flexContainer}>
       <Image
         source={{ uri: item.ownerAvatarUrl }}

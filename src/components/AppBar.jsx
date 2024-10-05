@@ -6,6 +6,7 @@ import theme from './theme';
 import Text from './Text';
 import { GET_USER } from './graphQL/queries'; 
 import useAuthStorage from '../hooks/useAuthStorage'; 
+import { useNavigate } from 'react-router-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -30,44 +31,46 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppBarTab = ({ children, ...props }) => {
-  return (
-    <Link style={styles.tabTouchable} {...props}>
-      <View style={styles.tabContainer}>
-        <Text fontWeight="bold" style={styles.tabText}>
-          {children}
-        </Text>
-      </View>
+const AppBarTab = ({ children, to, ...props }) => {
+  const content = (
+    <View style={styles.tabContainer} {...props}>
+      <Text fontWeight="bold" style={styles.tabText}>
+        {children}
+      </Text>
+    </View>
+  );
+
+  return to ? (
+    <Link to={to} {...props}>
+      {content}
     </Link>
+  ) : (
+    <Pressable {...props}>{content}</Pressable>
   );
 };
 
 const AppBar = () => {
-  const authStorage = useAuthStorage();
   const apolloClient = useApolloClient();
-  const { data } = useQuery(GET_USER, {
+  const authStorage = useAuthStorage();
+  const navigate = useNavigate();
 
-    fetchPolicy: 'cache-and-network',
-  });
+  const { data } = useQuery(GET_USER);
+  const currentUser = data?.me;
 
-  console.log("data", data)
-
-  const logOut = async () => {
+  const onSignOut = async () => {
     await authStorage.removeAccessToken();
-    await apolloClient.resetStore();
+    apolloClient.resetStore();
+    navigate('/');
   };
-  
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} horizontal>
         <AppBarTab to="/">Repositories</AppBarTab>
-        {!data?.me ? (
-          <AppBarTab to="/sign-in">Sign in</AppBarTab>
+        {currentUser ? (
+          <AppBarTab onPress={onSignOut}>Sign out</AppBarTab>
         ) : (
-          <Pressable onPress={logOut}>
-            <Text style={styles.tabText}>Log out</Text>
-          </Pressable>
+          <AppBarTab to="/sign-in">Sign in</AppBarTab>
         )}
       </ScrollView>
     </View>

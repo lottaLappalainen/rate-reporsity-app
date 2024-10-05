@@ -4,8 +4,6 @@ import { useFormik } from 'formik';
 import Text from './Text';
 import theme from './theme';
 import * as yup from 'yup';
-import useSignIn from '../hooks/useSignIn';
-import { useNavigate } from 'react-router-native';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -17,21 +15,7 @@ const initialValues = {
   password: '',
 };
 
-const SignIn = () => {
-  const [signIn] = useSignIn();
-  const navigate = useNavigate();
-
-  const onSubmit = async (values) => {
-    const { username, password } = values;
-    try {
-      const data  = await signIn({ username, password });
-      console.log(data);
-      navigate("/");
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+export const SignInContainer = ({ onSubmit }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -48,7 +32,7 @@ const SignIn = () => {
       padding: 10,
       marginBottom: 10,
       color: theme.colors.textPrimary,
-      borderColor: formik.touched.username && formik.errors.username ? '#d73a4a' : theme.colors.textSecondary, 
+      borderColor: formik.touched.username && formik.errors.username ? '#d73a4a' : theme.colors.textSecondary,
     },
     passwordInput: {
       borderWidth: 1,
@@ -56,7 +40,7 @@ const SignIn = () => {
       padding: 10,
       marginBottom: 10,
       color: theme.colors.textPrimary,
-      borderColor: formik.touched.password && formik.errors.password ? '#d73a4a' : theme.colors.textSecondary, 
+      borderColor: formik.touched.password && formik.errors.password ? '#d73a4a' : theme.colors.textSecondary,
     },
     button: {
       backgroundColor: theme.colors.primary,
@@ -100,6 +84,27 @@ const SignIn = () => {
       </Pressable>
     </View>
   );
+};
+
+import useSignIn from '../hooks/useSignIn';
+import { useNavigate } from 'react-router-native';
+
+const SignIn = () => {
+  const [signIn] = useSignIn();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (values) => {
+    const { username, password } = values;
+    try {
+      const data = await signIn({ username, password });
+      console.log(data);
+      navigate('/');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  return <SignInContainer onSubmit={handleSubmit} />;
 };
 
 export default SignIn;
