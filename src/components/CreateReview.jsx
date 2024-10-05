@@ -39,7 +39,7 @@ const CustomTextInput = ({ placeholder, value, onChangeText, error, touched }) =
   );
 };
 
-const SignInContainer = ({ onSubmit }) => {
+const CreateReviewContainer = ({ onSubmit }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -101,7 +101,7 @@ const CreateReview = () => {
   };
   
 
-  return <SignInContainer onSubmit={handleSubmit} />;
+  return <CreateReviewContainer onSubmit={handleSubmit} />;
 };
 
 const styles = StyleSheet.create({
