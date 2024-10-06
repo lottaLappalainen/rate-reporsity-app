@@ -16,23 +16,30 @@ const RepositoryInfo = ({ repository }) => {
 };
 
 const styles = StyleSheet.create({
-    separator: {
-      height: 10,
-      backgroundColor: '#e8e8e8',
-    }
-  });
+  separator: {
+    height: 10,
+    backgroundColor: '#e8e8e8',
+  },
+});
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const SingleRepository = () => {
   const { id } = useParams();
+  const first = 5; 
 
   const { loading: loadingRepository, error: errorRepository, data: repoData } = useQuery(GET_REPOSITORY, {
     variables: { id },
   });
 
-  const { loading: loadingReviews, error: errorReviews, data: reviewData } = useQuery(GET_REVIEWS, {
-    variables: { id },
+  const {
+    loading: loadingReviews,
+    error: errorReviews,
+    data: reviewData,
+    fetchMore,
+  } = useQuery(GET_REVIEWS, {
+    variables: { id, first },
+    fetchPolicy: 'cache-and-network',
   });
 
   if (loadingRepository || loadingReviews) return <ActivityIndicator size="large" color="#0000ff" />;
@@ -40,6 +47,19 @@ const SingleRepository = () => {
 
   const repository = repoData?.repository;
   const reviews = reviewData?.repository?.reviews.edges || [];
+  const pageInfo = reviewData?.repository?.reviews.pageInfo;
+
+  const handleEndReached = () => {
+    if (pageInfo.hasNextPage) {
+      fetchMore({
+        variables: {
+          id,
+          first,
+          after: pageInfo.endCursor,
+        },
+      });
+    }
+  };
 
   return (
     <FlatList
@@ -48,6 +68,8 @@ const SingleRepository = () => {
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ node }) => node.id}
       ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5} 
     />
   );
 };
